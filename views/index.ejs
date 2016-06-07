@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <%- include header %>
+    <% posts.forEach(function (post, index) { %>
+      <p><h2><a href="u/<%= post.name %>/<%= post.title %>"><%= post.title %></a></h2></p>
+      <p class="info">
+        作者：<a href="u/<%= post.name %>"><%= post.name %></a> |
+        日期：<%= post.time.day %> |
+        标签：<%= post.tag %>
+      </p>
+      <p><%- post.article %></p>
+      <% }) %>
+    <%- include footer %>
+  </body>
+</html>
