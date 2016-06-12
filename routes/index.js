@@ -127,7 +127,7 @@ router.get('/post', function (req, res) {
 router.post('/post', checkLogin);
 router.post('/post', function (req, res) {
 	var currentUser = req.session.user,
-      post = new Article(currentUser.name, req.body.title, req.body.post, req.body.tag);
+      post = new Article(currentUser.name, req.body.title, req.body.article, req.body.listContent, req.body.tag);
 	  post.save(function (err) {
 	    if (err) {
 	      req.flash('error', err); 
@@ -181,7 +181,7 @@ router.get('/edit/:name/:title', function (req, res) {
 router.post('/edit/:name/:title', checkLogin);
 router.post('/edit/:name/:title', function (req, res) {
   var currentUser = req.session.user;
-  Article.update(currentUser.name, req.params.title, req.body.post, req.body.tag, function (err) {
+  Article.update(currentUser.name, req.params.title, req.body.article, req.body.listContent, req.body.tag, function (err) {
     var url = encodeURI('/u/' + req.params.name + '/' + req.params.title);
     if (err) {
       req.flash('error', err); 

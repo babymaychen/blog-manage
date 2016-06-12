@@ -1,10 +1,11 @@
 var mongodb = require('./db'),
 	markdown = require('markdown').markdown;
 
-function Article(name, title, article, tag) {
+function Article(name, title, article, listContent, tag) {
   this.name = name;
   this.title = title;
   this.article = article;
+  this.listContent = listContent;
   this.tag = tag;
 }
 
@@ -28,8 +29,10 @@ Article.prototype.save = function(callback) {
       time: time,
       title: this.title,
       article: this.article,
+      listContent: this.listContent,
       tag : this.tag 
   };
+  console.log(article);
   //打开数据库
   mongodb.open(function (err, db) {
     if (err) {
@@ -81,6 +84,7 @@ Article.get = function(name, callback) {
           return callback(err);//失败！返回 err
         }
         docs.forEach(function (doc) {
+          doc.listContent = markdown.toHTML(doc.listContent);
           doc.article = markdown.toHTML(doc.article);
         });
         callback(null, docs);//成功！以数组形式返回查询的结果
@@ -112,6 +116,7 @@ Article.getOne = function(name, title, callback) {
           return callback(err);
         }
         //解析 markdown 为 html
+        doc.listContent = markdown.toHTML(doc.listContent);
         doc.article = markdown.toHTML(doc.article);
         callback(null, doc);//返回查询的一篇文章
       });
@@ -147,7 +152,7 @@ Article.edit = function(name, title, callback) {
 };
 
 //更新一篇文章及其相关信息
-Article.update = function(name, title, article, callback) {
+Article.update = function(name, title, article, listContent, callback) {
   //打开数据库
   mongodb.open(function (err, db) {
     if (err) {
@@ -159,12 +164,14 @@ Article.update = function(name, title, article, callback) {
         mongodb.close();
         return callback(err);
       }
+      console.log(article);
       //更新文章内容
       collection.update({
         "name": name,
         "title": title
       }, {
-        $set: {article: article}
+        $set: {article: article,
+              listContent: listContent}
       }, function (err) {
         mongodb.close();
         if (err) {
